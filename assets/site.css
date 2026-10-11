@@ -329,3 +329,124 @@ html { scroll-behavior: auto; }
  .header-row nav a { display:flex; padding:12px 4px; border-bottom:1px solid var(--line) !important; }
  .header-row nav a::after { left:4px; right:4px; bottom:3px; }
 }
+
+
+/* ================================================================
+   FIELDWORK RC2 · semantic visual consistency
+   Sitewide control: no color-filled promotional or caution panels.
+   Semantics remain in section rules, metadata, labels and restrained accents.
+   ================================================================ */
+:root {
+  --field-surface:transparent;
+  --field-note-edge:#607d85;
+  --field-boundary-edge:#8b8e87;
+}
+html[data-theme="dark"] {
+  --field-surface:transparent;
+  --field-note-edge:#7ba3aa;
+  --field-boundary-edge:#a6aaae;
+}
+/* The primary link remains obviously actionable without a filled color slab. */
+.primary-action,
+html[data-theme="dark"] .primary-action {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:.35rem;
+  border:1px solid var(--strong-line);
+  border-radius:3px;
+  background:var(--field-surface);
+  color:var(--ink);
+  font-weight:700;
+  text-decoration:none;
+  padding:12px 20px;
+  transition:border-color 120ms ease, color 120ms ease;
+}
+.primary-action:hover,
+html[data-theme="dark"] .primary-action:hover {
+  background:var(--field-surface);
+  color:var(--ink);
+  border-color:var(--navy);
+  text-decoration:underline;
+}
+.primary-action:focus-visible { outline:2px solid var(--navy); outline-offset:3px; }
+/* These are records, not alert tiles.  Their borders mean containment. */
+.hero-ledger,
+html[data-theme="dark"] .hero-ledger,
+.primary-finding,
+html[data-theme="dark"] .primary-finding,
+.proposition,
+html[data-theme="dark"] .proposition,
+.proof-object,
+html[data-theme="dark"] .proof-object,
+.proof-object.cannot,
+html[data-theme="dark"] .proof-object.cannot {
+  background:transparent;
+  border-color:var(--line);
+  box-shadow:none;
+}
+.hero-ledger,
+html[data-theme="dark"] .hero-ledger {border-top:2px solid var(--strong-line);}
+.primary-finding,
+html[data-theme="dark"] .primary-finding,
+.proposition,
+html[data-theme="dark"] .proposition {
+  border-left:2px solid var(--field-note-edge);
+}
+.proof-object,
+html[data-theme="dark"] .proof-object {border-left:2px solid var(--field-note-edge);}
+.proof-object.cannot,
+html[data-theme="dark"] .proof-object.cannot {border-left:2px solid var(--field-boundary-edge);}
+/* Limitations are equally important, without suggesting emergency status. */
+.limit-object,
+html[data-theme="dark"] .limit-object {
+  background:transparent;
+  color:var(--secondary);
+  border:0;
+  border-top:1px solid var(--strong-line);
+  border-bottom:1px solid var(--line);
+  border-radius:0;
+  padding:18px 0;
+}
+.limit-object ul,
+html[data-theme="dark"] .limit-object ul,
+html[data-theme="dark"] .note-boundary {color:var(--secondary);}
+.boundary-line .micro-label,
+html[data-theme="dark"] .boundary-line .micro-label {color:var(--soft);}
+.inline-state,
+html[data-theme="dark"] .inline-state {
+  background:transparent;
+  border-left:2px solid var(--field-note-edge);
+  color:var(--ink);
+}
+/* Tab selection = an underline and aria-pressed, not a solid panel. */
+.scenario-tabs button,
+html[data-theme="dark"] .scenario-tabs button,
+.scenario-tabs button.selected,
+.scenario-tabs button[aria-pressed="true"],
+html[data-theme="dark"] .scenario-tabs button.selected,
+html[data-theme="dark"] .scenario-tabs button[aria-pressed="true"] {
+  background:transparent;
+  color:var(--secondary);
+  border-color:var(--line);
+  border-bottom:2px solid transparent;
+}
+.scenario-tabs button.selected,
+.scenario-tabs button[aria-pressed="true"],
+html[data-theme="dark"] .scenario-tabs button.selected,
+html[data-theme="dark"] .scenario-tabs button[aria-pressed="true"] {
+  color:var(--ink);
+  border-bottom-color:var(--navy);
+}
+.scenario-tabs button:hover,
+html[data-theme="dark"] .scenario-tabs button:hover {color:var(--ink);}
+.scenario-tabs button:focus-visible {outline:2px solid var(--navy);outline-offset:-3px;}
+.technical-matrix>div.matrix-header,
+.results-table>div.result-header,
+.results-table .result-total,
+html[data-theme="dark"] .technical-matrix>div.matrix-header,
+html[data-theme="dark"] .results-table>div.result-header,
+html[data-theme="dark"] .results-table .result-total {background:transparent;}
+/* Existing note rules were already correct; ensure no dark warning fill leaks. */
+.note-reading .note-boundary,
+html[data-theme="dark"] .note-reading .note-boundary {background:transparent;}

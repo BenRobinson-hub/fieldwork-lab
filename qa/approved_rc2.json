@@ -1,0 +1,49 @@
+{
+  "type": "GC02_LAB_RC2_EXACT_PUBLIC_PAYLOAD",
+  "baseline_commit": "4b2186c8157281752145147e2cc998ec6c577fee",
+  "baseline_git_css_blob": "d9dfba3490e48f384402a236c6582c908d74a011",
+  "candidate_stage": "LOCAL_ONLY_PUBLICATION_HOLD",
+  "planned_change": "assets/site.css ONLY",
+  "approved_public_sources": [
+    "https://github.com/higress-group/higress/issues/4788#issuecomment-5965753875",
+    "https://github.com/apache/rocketmq/issues/10911#issuecomment-6099313937"
+  ],
+  "site_files": {
+    ".nojekyll": {
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "assets/site.css": {
+      "size": 35961,
+      "sha256": "73b5857be62093d96875655ba69866ff20075578bc1e81dae0591be142bab0e7"
+    },
+    "assets/site.js": {
+      "size": 4507,
+      "sha256": "2e065345d65ce351cad8e8dfc937d46b94d726b69d10f867871195741114e6be"
+    },
+    "evidence/higress-4788.html": {
+      "size": 6144,
+      "sha256": "82e39e2a10c5b6bd7865721c642f8b9c663218ba9752b6ba68f41359337ca214"
+    },
+    "evidence/rocketmq-10911.html": {
+      "size": 6244,
+      "sha256": "8b3147cfd52f1b5d3f8107b080f88ffb47875771bb4d214137068ffa86d816d0"
+    },
+    "index.html": {
+      "size": 8964,
+      "sha256": "892b9271240ac7267faf731e66ac1c032714ed6be5da78f9ea52de3d05d0b2b8"
+    },
+    "investigations/higress.html": {
+      "size": 7718,
+      "sha256": "bc30c182df086f3f16a4506b6c2e9eb751b22f5933d8d665889abe26e70da619"
+    },
+    "investigations/rocketmq.html": {
+      "size": 8057,
+      "sha256": "3d4af503537155be375a01d14e881fff989828a29f30be6c6d9c41b1128af82f"
+    },
+    "notes.html": {
+      "size": 4218,
+      "sha256": "1bcadaf7dbba082b478fed7859b6d6b8925b65be60ae05bb7f72c3191f06d1ba"
+    }
+  }
+}
