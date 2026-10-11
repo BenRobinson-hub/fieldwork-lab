@@ -1,0 +1,57 @@
+# GC02 / Fieldwork LAB RC2 - CANDIDATE-BRANCH QA ONLY
+# This workflow MUST NOT deploy Pages, modify main, create a PR, or write back.
+# It is intentionally separate from any future deployment workflow.
+name: Fieldwork RC2 candidate QA (no deployment)
+
+on:
+  push:
+    branches:
+      - gc02-rc2-controlled-release-candidate
+    paths:
+      - '.github/workflows/fieldwork-controlled-pages.yml'
+      - 'qa/**'
+      - 'assets/**'
+      - 'evidence/**'
+      - 'investigations/**'
+      - 'index.html'
+      - 'notes.html'
+      - '.nojekyll'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: fieldwork-candidate-qa-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  quality:
+    if: github.repository == 'BenRobinson-hub/fieldwork-lab' && github.ref == 'refs/heads/gc02-rc2-controlled-release-candidate'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Check out candidate commit
+        uses: actions/checkout@v4
+      - name: Prepare Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install browser runtime for real HTTP gate
+        run: |
+          python -m pip install --disable-pip-version-check 'playwright==1.56.0'
+          python -m playwright install --with-deps chromium
+      - name: Stage ONLY the nine public site files
+        run: python qa/build_public.py --source . --dest ../fieldwork-qa-stage --manifest qa/approved_rc2.json
+      - name: Exact source and real HTTP browser checks
+        run: python qa/site_gate.py --site ../fieldwork-qa-stage --manifest qa/approved_rc2.json --runtime http --out /tmp/fieldwork-qa-checks.json
+      - name: Negative controls must fail closed
+        run: python qa/selftest_negative.py --site ../fieldwork-qa-stage --manifest qa/approved_rc2.json --out /tmp/fieldwork-qa-negatives.json
+      - name: Retain machine-readable QA evidence (no deployment)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fieldwork-candidate-qa-evidence
+          path: |
+            /tmp/fieldwork-qa-checks.json
+            /tmp/fieldwork-qa-negatives.json
+          if-no-files-found: warn
