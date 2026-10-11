@@ -1,7 +1,7 @@
-# GC02 / Fieldwork LAB RC2 - CANDIDATE-BRANCH QA ONLY
-# This workflow MUST NOT deploy Pages, modify main, create a PR, or write back.
-# It is intentionally separate from any future deployment workflow.
-name: Fieldwork RC2 candidate QA (no deployment)
+# GC02 Fieldwork LAB RC2 - P1 CANDIDATE / PR QUALITY GATE ONLY
+# ZERO deployment, ZERO PR creation/merge, ZERO Pages mutation, read-only token.
+# This does not by itself enforce branch protection or control Pages source.
+name: Fieldwork RC2 candidate and PR QA (no deployment)
 
 on:
   push:
@@ -16,22 +16,47 @@ on:
       - 'index.html'
       - 'notes.html'
       - '.nojekyll'
+  pull_request:
+    branches:
+      - main
 
 permissions:
   contents: read
 
 concurrency:
-  group: fieldwork-candidate-qa-${{ github.ref }}
+  group: fieldwork-rc2-p1-qa-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
   quality:
-    if: github.repository == 'BenRobinson-hub/fieldwork-lab' && github.ref == 'refs/heads/gc02-rc2-controlled-release-candidate'
+    name: rc2-release-quality
+    if: github.repository == 'BenRobinson-hub/fieldwork-lab'
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
-      - name: Check out candidate commit
+      - name: Check out triggering candidate or PR merge commit
         uses: actions/checkout@v4
+      - name: Validate event, provenance and frozen main base
+        shell: bash
+        env:
+          PR_HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+          PR_HEAD_REF: ${{ github.event.pull_request.head.ref }}
+          PR_BASE_REF: ${{ github.event.pull_request.base.ref }}
+          PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          set -euo pipefail
+          [[ "$(git rev-parse HEAD)" == "$GITHUB_SHA" ]] || { echo 'STOP_CHECKOUT_IDENTITY_MISMATCH' >&2; exit 31; }
+          if [[ "$GITHUB_EVENT_NAME" == 'push' ]]; then
+            [[ "$GITHUB_REF" == 'refs/heads/gc02-rc2-controlled-release-candidate' ]] || { echo 'STOP_NON_CANDIDATE_PUSH' >&2; exit 32; }
+          elif [[ "$GITHUB_EVENT_NAME" == 'pull_request' ]]; then
+            [[ "$PR_HEAD_REPO" == 'BenRobinson-hub/fieldwork-lab' ]] || { echo 'STOP_WRONG_HEAD_REPOSITORY' >&2; exit 33; }
+            [[ "$PR_HEAD_REF" == 'gc02-rc2-controlled-release-candidate' ]] || { echo 'STOP_WRONG_HEAD_BRANCH' >&2; exit 34; }
+            [[ "$PR_BASE_REF" == 'main' ]] || { echo 'STOP_WRONG_BASE_BRANCH' >&2; exit 35; }
+            [[ "$PR_BASE_SHA" == '4b2186c8157281752145147e2cc998ec6c577fee' ]] || { echo 'STOP_MAIN_BASELINE_DRIFT' >&2; exit 36; }
+          else
+            echo 'STOP_UNEXPECTED_EVENT' >&2
+            exit 37
+          fi
       - name: Prepare Python
         uses: actions/setup-python@v5
         with:
@@ -50,7 +75,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: fieldwork-candidate-qa-evidence
+          name: fieldwork-p1-pr-qa-evidence
           path: |
             /tmp/fieldwork-qa-checks.json
             /tmp/fieldwork-qa-negatives.json
